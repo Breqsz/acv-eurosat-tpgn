@@ -11,6 +11,8 @@ notebooks/_build_notebook.py
 
 # dados grandes / cache de datasets
 tensorflow_datasets/
+data/
+*.zip
 *.npz
 
 # OS

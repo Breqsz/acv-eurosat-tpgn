@@ -88,6 +88,8 @@ habilitando decisões de uso do solo, monitoramento agrícola e planejamento urb
 </td></tr>
 </table>
 
+![Amostras do dataset](reports/figures/samples.png)
+
 ---
 
 ## 🧠 Arquiteturas — 3 CNNs do Zero
@@ -106,25 +108,50 @@ Cada modelo isola **uma variável arquitetural**, permitindo uma comparação te
 
 ## 📈 Resultados
 
-> ⏳ *Preencher após rodar o notebook (valores da tabela `results`).*
-
 | Modelo | Parâmetros | Acurácia (teste) | Loss (teste) |
 |:--|:--:|:--:|:--:|
-| M1 | — | — | — |
-| M2 | — | — | — |
-| M3 | — | — | — |
+| 🟦 M1 — Baseline | 2.117.962 | 76,54% | 1,4186 |
+| 🟩 M2 — Deep + Reg | 1.111.402 | 89,60% | 0,3371 |
+| 🟨 **M3 — GAP** | **585.578** | **90,44%** | **0,2853** |
 
-🏆 **Melhor modelo:** _ · 🎯 **Meta:** ≥ 88% no conjunto de teste
+<div align="center">
+
+🏆 **Melhor modelo: M3 (GAP)** — **90,44%** no teste ✅ (meta ≥ 88%)
+*com o **menor** número de parâmetros: ¼ do M1 e metade do M2.*
+
+</div>
+
+**Leitura técnica:** o **M1** decora o treino (acurácia de treino ~0,98 vs. validação ~0,80, com o
+loss de validação subindo) — overfitting clássico. O **M2** adiciona profundidade + BatchNorm +
+Dropout + data augmentation e salta para 89,6%, fechando o gap. O **M3** troca a cabeça densa por
+**GlobalAveragePooling**, removendo ~525 mil parâmetros — e mesmo assim **vence** (90,44%):
+evidência de que a cabeça densa era capacidade ociosa e fonte de overfitting, e que o GAP atua como
+regularizador estrutural.
+
+### 🔵 Matriz de confusão (M3)
+
+![Matriz de confusão](reports/figures/confusion_matrix.png)
+
+As maiores confusões ocorrem entre classes visualmente próximas — `HerbaceousVegetation` ↔
+`Residential`/`Forest`, `SeaLake` ↔ `Forest` (tons escuros e homogêneos), `Industrial` ↔
+`Residential` e `Highway` ↔ `River` (faixas estreitas). Classes bem distintas (`Forest`,
+`Residential`, `SeaLake`) acertam quase 100%.
+
+### 📉 Curvas de treino (overfitting do M1 → regularização no M2/M3)
+
+| M1 (baseline) | M2 (deep + reg) | M3 (GAP) |
+|:--:|:--:|:--:|
+| ![M1](reports/figures/history_M1.png) | ![M2](reports/figures/history_M2.png) | ![M3](reports/figures/history_M3.png) |
 
 <details>
-<summary><b>📁 Figuras geradas (reports/figures/)</b></summary>
+<summary><b>📁 Todas as figuras (reports/figures/)</b></summary>
 
 | Arquivo | Conteúdo |
 |:--|:--|
 | `class_distribution.png` | distribuição de imagens por classe |
 | `samples.png` | amostras de cada classe |
 | `history_M1/M2/M3.png` | curvas de accuracy e loss por época |
-| `confusion_matrix.png` | matriz de confusão do melhor modelo |
+| `confusion_matrix.png` | matriz de confusão do melhor modelo (M3) |
 | `errors.png` | exemplos mal classificados (análise de erros) |
 
 </details>

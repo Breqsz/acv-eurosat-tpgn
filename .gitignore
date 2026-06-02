@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+
+# gerador interno do notebook (nao faz parte da entrega)
+notebooks/_build_notebook.py
+
+# dados grandes / cache de datasets
+tensorflow_datasets/
+*.npz
+
+# OS
+Thumbs.db
+.DS_Store

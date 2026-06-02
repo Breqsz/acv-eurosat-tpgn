@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TPGN · Cobertura do Solo — EuroSAT</title>
+<style>
+  :root{--bg:#0a0e14;--card:#121826;--accent:#4f8cff;--txt:#e6edf3;--muted:#8b97a8}
+  *{box-sizing:border-box;font-family:system-ui,Segoe UI,Roboto,sans-serif}
+  body{margin:0;background:radial-gradient(1200px 600px at 50% -10%,#13203a,var(--bg));
+       color:var(--txt);display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px}
+  .card{background:var(--card);border:1px solid #1e2940;border-radius:16px;padding:28px;
+        width:min(540px,100%);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 20px;line-height:1.5}
+  .drop{border:2px dashed #2a3956;border-radius:12px;padding:30px;text-align:center;
+        cursor:pointer;transition:.2s;color:var(--muted);display:block}
+  .drop:hover{border-color:var(--accent);background:#0e1626;color:var(--txt)}
+  img#preview{max-width:160px;border-radius:10px;margin-top:14px;display:none;image-rendering:pixelated}
+  .top{font-size:18px;font-weight:700;margin:18px 0 10px;color:var(--accent)}
+  .row{display:flex;justify-content:space-between;font-size:13px;margin-top:9px}
+  .bar{height:20px;background:#0e1626;border-radius:6px;overflow:hidden;margin:4px 0}
+  .bar>div{height:100%;background:linear-gradient(90deg,#4f8cff,#7aa7ff);transition:width .4s}
+  footer{margin-top:22px;color:var(--muted);font-size:11px;text-align:center}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Cobertura do Solo · EuroSAT</h1>
+    <p class="sub">TPGN — TechPulse GlobalNetwork · Global Solution 2026<br>
+       Classificação de tiles de satélite Sentinel-2 com CNN treinada do zero.</p>
+
+    <label class="drop" id="drop">
+      Clique ou arraste uma imagem de satélite
+      <input type="file" id="file" accept="image/*" hidden>
+      <br><img id="preview" alt="preview">
+    </label>
+
+    <div id="out"></div>
+    <footer>Author: GUILHERME ROCHA BIANCHINI</footer>
+  </div>
+
+<script>
+const file = document.getElementById('file');
+const drop = document.getElementById('drop');
+const preview = document.getElementById('preview');
+const out = document.getElementById('out');
+
+drop.addEventListener('dragover', e => e.preventDefault());
+drop.addEventListener('drop', e => { e.preventDefault(); file.files = e.dataTransfer.files; go(); });
+file.addEventListener('change', go);
+
+async function go(){
+  if(!file.files.length) return;
+  preview.src = URL.createObjectURL(file.files[0]);
+  preview.style.display = 'inline-block';
+  out.innerHTML = '<p class="sub">Classificando…</p>';
+
+  const fd = new FormData();
+  fd.append('file', file.files[0]);
+
+  try {
+    const r = await fetch('/predict', { method: 'POST', body: fd });
+    if(!r.ok){ out.innerHTML = '<p class="sub">Erro na predição.</p>'; return; }
+    const d = await r.json();
+    const probs = Object.entries(d.probabilidades).sort((a,b) => b[1] - a[1]);
+    out.innerHTML =
+      '<div class="top">' + d.classe + ' · ' + (d.confianca*100).toFixed(1) + '%</div>' +
+      probs.map(([c,p]) =>
+        '<div class="row"><span>' + c + '</span><span>' + (p*100).toFixed(1) + '%</span></div>' +
+        '<div class="bar"><div style="width:' + (p*100).toFixed(1) + '%"></div></div>'
+      ).join('');
+  } catch(e){
+    out.innerHTML = '<p class="sub">Falha ao conectar na API.</p>';
+  }
+}
+</script>
+</body>
+</html>

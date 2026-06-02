@@ -12,6 +12,9 @@ notebooks/_build_notebook.py
 # apoio interno (roteiro do video) - nao faz parte da entrega
 roteiro-video.md
 
+# script local da demo (aponta pro venv desta maquina)
+run_demo.ps1
+
 # dados grandes / cache de datasets
 tensorflow_datasets/
 data/

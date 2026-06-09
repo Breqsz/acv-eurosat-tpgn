@@ -217,6 +217,5 @@ computer-vision/
 
 **Grupo TPGN — TechPulse GlobalNetwork** · FIAP · Engenharia de Software · 4º Ano
 
-*Code author: Guilherme Rocha Bianchini*
 
 </div>

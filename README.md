@@ -59,7 +59,7 @@ habilitando decisões de uso do solo, monitoramento agrícola e planejamento urb
 
 <div align="center">
 
-### ▶️ **[ASSISTIR NO YOUTUBE — preencher após gravar]**
+### ▶️ **[[ASSISTIR NO YOUTUBE](https://youtu.be/PulyYe_e6gA)]**
 
 *(demonstração da proposta + funcionamento do sistema, ≤ 3 min)*
 
